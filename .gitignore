@@ -1,0 +1,15 @@
+# Dependências e Builds
+/backend/vendor/
+/backend/node_modules/
+/frontend/node_modules/
+/frontend/dist/
+
+# Arquivos de Configuração
+/backend/.env
+/frontend/.env.local
+
+# Logs e Cache
+*.log
+.DS_Store
+.idea/
+.vscode/
