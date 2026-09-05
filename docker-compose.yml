@@ -1,0 +1,81 @@
+services:
+  # backend config
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: projeto-scan-backend
+
+    working_dir: /app # diretório de trabalho do laravel, puxando pasta /app
+
+    volumes:
+      - ./backend:/app
+
+    ports:
+      - "8000:8000" # porta container : porta máquina
+
+    environment:
+      APP_ENV: ${APP_ENV}
+
+      DB_CONNECTION: ${DB_CONNECTION}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+    # só deixa o laravel conectar com o banco se tiver conectado e saudável
+    # com base no healtcheck mais abaixo.
+    depends_on:
+      database:
+        condition: service_healthy
+
+    command: sh -c "composer install && php artisan serve --host=0.0.0.0 --port=8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: projeto-scan-frontend
+
+    working_dir: /src
+
+    volumes:
+      - ./frontend:/src
+      - /app/node_modules
+
+    ports:
+      - "5173:5173" # porta container : porta máquina
+
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+  database:
+    image: postgres:18
+
+    container_name: projeto-scan_database
+
+    restart: unless-stopped
+
+    # como não temos o ambiente pgsql ainda deixei o padrão
+    environment:
+      POSTGRES_DB: projeto-scan
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5432:5432" # porta container : porta máquina
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+    # healthcheck valida se tá tudo certo com o banco para permitir a conexão com o laravel.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d projeto-scan"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
