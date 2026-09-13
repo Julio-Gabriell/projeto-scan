@@ -14,14 +14,14 @@ class RegisterUserAction
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'cpf' => $data['cpf'] ?? null,
-                'telefone' => $data['telefone'] ?? null,
-                'acesso' => 'cliente',
+                'phone' => $data['telefone'] ?? null,
+                'role' => 'cliente',
                 'password' => $data['password'],
             ]);
 
             $abilities = ['*'];
 
-            $expiresAt = match ($user->acesso) {
+            $expiresAt = match ($user->role) {
                 'admin' => now()->addHours(8),    
                 'operador' => now()->addHours(12),   
                 default => now()->addDays(14),       

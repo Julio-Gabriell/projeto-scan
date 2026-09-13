@@ -18,7 +18,7 @@ class RegisterRequest extends FormRequest
             'email' => strtolower(trim((string) $this->email)),
             'name' => trim((string) $this->name),
             'cpf' => $this->cpf ? preg_replace('/\D/', '', (string) $this->cpf) : null,
-            'telefone' => $this->telefone ? preg_replace('/\D/', '', (string) $this->telefone) : null,
+            'phone' => $this->telefone ? preg_replace('/\D/', '', (string) $this->telefone) : null,
         ]);
     }
 
@@ -28,7 +28,7 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string', 'min:2', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'cpf' => ['nullable', 'string', 'digits:11', 'unique:users,cpf'],
-            'telefone' => ['nullable', 'string', 'digits:11'],
+            'phone' => ['nullable', 'string', 'digits:11'],
             'password' => [
                 'required',
                 'confirmed',
@@ -45,7 +45,7 @@ class RegisterRequest extends FormRequest
             'email.unique' => 'Este e-mail já está cadastrado em nosso sistema.',
             'cpf.digits' => 'O CPF deve conter exatamente 11 dígitos numéricos.',
             'cpf.unique' => 'Este CPF já está cadastrado em nosso sistema.',
-            'telefone.digits_between' => 'O telefone deve conter entre 10 e 11 dígitos com DDD.',
+            'phone.digits' => 'O telefone deve conter 11 dígitos com DDD.',
             'password.required' => 'A senha é obrigatória.',
             'password.confirmed' => 'As senhas digitadas não coincidem.',
         ];
